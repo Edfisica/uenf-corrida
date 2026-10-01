@@ -277,6 +277,8 @@ let treinoRestante = 0;
 let treinoExecutando = false;
 let treinoPausado = false;
 let treinoInicio = null;
+let treinoDeadline = null;
+let wakeLock = null;
 
 document.querySelectorAll(".training-btn").forEach(btn => {
   btn.addEventListener("click", () => prepararTreino(btn.dataset.treino));
@@ -360,6 +362,7 @@ function iniciarTreino() {
     treinoExecutando = true;
     treinoPausado = false;
     treinoInicio = treinoInicio || Date.now();
+    treinoDeadline = Date.now() + treinoRestante * 1000;
     iniciarContagemTreino();
     return;
   }
@@ -374,6 +377,7 @@ function pausarTreino() {
   if (!treinoExecutando) return;
 
   treinoPausado = true;
+  treinoRestante = Math.max(0, Math.ceil((treinoDeadline - Date.now()) / 1000));
   pararTimerTreino();
   document.getElementById("treinoStatus").textContent = "Treino pausado.";
 }
@@ -404,16 +408,11 @@ function iniciarContagemTreino() {
   atualizarTreinoTempo();
 
   treinoTimer = setInterval(() => {
-    if (treinoPausado) return;
-
-    treinoRestante--;
-
-    if (treinoRestante <= 0) {
-      avancarEtapa();
-    } else {
-      atualizarTreinoTempo();
-    }
-  }, 1000);
+    if (treinoPausado || !treinoDeadline) return;
+    treinoRestante = Math.max(0, Math.ceil((treinoDeadline - Date.now()) / 1000));
+    if (treinoRestante <= 0) avancarEtapa();
+    else atualizarTreinoTempo();
+  }, 250);
 }
 
 function avancarEtapa() {
@@ -427,6 +426,7 @@ function avancarEtapa() {
   }
 
   treinoRestante = treinoEtapas[treinoIndice].duracao;
+  treinoDeadline = Date.now() + treinoRestante * 1000;
   atualizarTreinoTela();
   atualizarTreinoTempo();
 }
@@ -1009,3 +1009,25 @@ document.getElementById("btnLimparAcompanhamento").addEventListener("click", () 
 });
 
 inicializarAcompanhamento();
+
+
+// Tutorial: abre e fecha sem interferir nos dados do treino.
+const tutorialEl = document.getElementById("tutorial");
+document.getElementById("btnComoFunciona").addEventListener("click", () => { tutorialEl.hidden = !tutorialEl.hidden; if (!tutorialEl.hidden) tutorialEl.scrollIntoView({behavior:"smooth",block:"start"}); });
+document.getElementById("btnFecharTutorial").addEventListener("click", () => { tutorialEl.hidden = true; window.scrollTo({top:0,behavior:"smooth"}); });
+
+// Screen Wake Lock: browsers compatíveis mantêm o visor ativo enquanto solicitado.
+const manterTela = document.getElementById("manterTelaLigada");
+const telaEscura = document.getElementById("telaEscura");
+async function atualizarWakeLock() {
+  if (!manterTela.checked || document.visibilityState !== "visible" || !("wakeLock" in navigator)) {
+    if (wakeLock) { try { await wakeLock.release(); } catch (_) {} wakeLock = null; }
+    return;
+  }
+  try { if (!wakeLock) wakeLock = await navigator.wakeLock.request("screen"); } catch (_) {
+    document.getElementById("treinoStatus").textContent = "Este navegador não permitiu manter a tela ligada.";
+  }
+}
+manterTela.addEventListener("change", atualizarWakeLock);
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") atualizarWakeLock(); });
+telaEscura.addEventListener("change", () => document.body.classList.toggle("training-dim", telaEscura.checked));

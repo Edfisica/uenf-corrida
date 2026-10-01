@@ -17,14 +17,24 @@
   <main class="app">
     <header class="header">
       <div class="brand">
-        <div class="brand-mark">🏃</div>
+        <div class="brand-mark"><img src="icons/icon-192.png" alt="Logo UENF Corrida"></div>
         <div>
           <div class="eyebrow">UENF EM MOVIMENTO</div>
           <h1>Treinamento de Corrida</h1>
         </div>
       </div>
       <p>Calculadora de VO₂máx, pace, velocidade e zonas de treinamento.</p>
+      <button id="btnComoFunciona" class="secondary" type="button">COMO FUNCIONA</button>
     </header>
+
+
+    <section id="tutorial" class="card" hidden aria-labelledby="tutorialTitulo">
+      <h2 id="tutorialTitulo">Como Funciona</h2>
+      <div class="tutorial-card"><h3>🏃‍♂️ TESTE COOPER</h3><p>Corra a maior distância possível em 12 minutos e calcule seu VO₂ máximo. Ou informe seu VO₂ diretamente.</p></div>
+      <div class="tutorial-card"><h3>📊 ZONAS DE TREINO</h3><p>Veja as zonas de intensidade (Z1 a Z4) com cores, velocidade e pace para cada percentual do seu VO₂.</p></div>
+      <div class="tutorial-card"><h3>📅 MICROCICLO</h3><p>Plano semanal com treinos intervalados (1x1, 4x4), Fartlek, Limiar e treinos contínuos.</p></div>
+      <button id="btnFecharTutorial" type="button">COMEÇAR</button>
+    </section>
 
     <section class="card">
       <h2>1. Defina seu VO₂máx</h2>
@@ -129,6 +139,85 @@
         </div>
       </div>
 
+    <section id="microciclo" class="card">
+      <h2>Microciclo</h2>
+      <p class="muted">A proposta organiza a semana pela distribuição da intensidade, e não por dias fixos.</p>
+
+      <div class="micro-principle">
+        <div class="principle-main">
+          <strong>1 treino forte</strong>
+          <span>seguido por 3 treinos moderados</span>
+        </div>
+        <div class="principle-note">
+          A sequência pode ser distribuída conforme a rotina do atleta.
+        </div>
+      </div>
+
+      <div class="micro-sequence">
+        <div class="sequence-item strong">
+          <strong>FORTE</strong>
+          <span>Intervalado, Fartlek ou Limiar</span>
+        </div>
+        <div class="sequence-arrow">→</div>
+        <div class="sequence-item">
+          <strong>MODERADO</strong>
+          <span>Treino contínuo</span>
+        </div>
+        <div class="sequence-arrow">→</div>
+        <div class="sequence-item">
+          <strong>MODERADO</strong>
+          <span>Treino contínuo</span>
+        </div>
+        <div class="sequence-arrow">→</div>
+        <div class="sequence-item">
+          <strong>MODERADO</strong>
+          <span>Treino contínuo</span>
+        </div>
+      </div>
+    </section>
+
+      <div class="card stimulus-box">
+        <h2>Quantidade de estímulos no intervalado</h2>
+        <p class="muted">
+          O tempo total dos estímulos fortes corresponde a <strong>10% do volume total de treinamento semanal</strong>.
+        </p>
+
+        <div class="volume-inputs">
+          <label>
+            Volume semanal de treinamento (minutos)
+            <input id="minutosSemana" type="number" min="1" step="1" value="120">
+          </label>
+
+          <label>
+            Tipo de intervalado
+            <select id="tipoIntervalado">
+              <option value="1x1">1×1, estímulos de 1 min</option>
+              <option value="4x4">4×4, estímulos de 4 min</option>
+            </select>
+          </label>
+        </div>
+
+        <button id="btnCalcularEstimulos" class="volume-button">CALCULAR ESTÍMULOS</button>
+
+        <div id="estimuloResultado" class="volume-result" hidden>
+          <div class="training-metrics">
+            <div class="metric">
+              <span>Tempo forte</span>
+              <strong id="tempoEstimulo">0 min</strong>
+            </div>
+            <div class="metric">
+              <span>Estímulos</span>
+              <strong id="qtdEstimulos">0</strong>
+            </div>
+            <div class="metric">
+              <span>Volume semanal</span>
+              <strong id="tempoSemanal">0 min</strong>
+            </div>
+          </div>
+          <p id="estimuloObservacao" class="muted"></p>
+        </div>
+      </div>
+
       <div class="card">
         <h2>Acessar treinamentos</h2>
         <p class="muted">Use seu VO₂máx calculado para iniciar os treinos.</p>
@@ -175,6 +264,11 @@
         </div>
 
         <div class="training-timer" id="treinoTempo">00:00</div>
+        <div class="screen-options">
+          <label class="screen-option"><input id="manterTelaLigada" type="checkbox"> Manter tela ligada</label>
+          <label class="screen-option"><input id="telaEscura" type="checkbox"> Escurecer tela</label>
+          <p class="muted">O funcionamento em segundo plano depende do navegador e das configurações do celular.</p>
+        </div>
 
         <div class="training-metrics">
           <div class="metric">
@@ -200,47 +294,7 @@
         <p id="treinoStatus" class="muted training-status"></p>
       </div>
 
-      <div class="stimulus-box">
-        <h3>Quantidade de estímulos no intervalado</h3>
-        <p class="muted">
-          O tempo total dos estímulos fortes corresponde a <strong>10% do volume total de treinamento semanal</strong>.
-        </p>
 
-        <div class="volume-inputs">
-          <label>
-            Volume semanal de treinamento (minutos)
-            <input id="minutosSemana" type="number" min="1" step="1" value="120">
-          </label>
-
-          <label>
-            Tipo de intervalado
-            <select id="tipoIntervalado">
-              <option value="1x1">1×1, estímulos de 1 min</option>
-              <option value="4x4">4×4, estímulos de 4 min</option>
-            </select>
-          </label>
-        </div>
-
-        <button id="btnCalcularEstimulos" class="volume-button">CALCULAR ESTÍMULOS</button>
-
-        <div id="estimuloResultado" class="volume-result" hidden>
-          <div class="training-metrics">
-            <div class="metric">
-              <span>Tempo forte</span>
-              <strong id="tempoEstimulo">0 min</strong>
-            </div>
-            <div class="metric">
-              <span>Estímulos</span>
-              <strong id="qtdEstimulos">0</strong>
-            </div>
-            <div class="metric">
-              <span>Volume semanal</span>
-              <strong id="tempoSemanal">0 min</strong>
-            </div>
-          </div>
-          <p id="estimuloObservacao" class="muted"></p>
-        </div>
-      </div>
     </section>
 
     <section id="acompanhamento" class="card">
@@ -350,42 +404,7 @@
       <button id="btnLimparAcompanhamento" class="danger-button" type="button">LIMPAR ACOMPANHAMENTO</button>
     </section>
 
-    <section id="microciclo" class="card">
-      <h2>Microciclo</h2>
-      <p class="muted">A proposta organiza a semana pela distribuição da intensidade, e não por dias fixos.</p>
 
-      <div class="micro-principle">
-        <div class="principle-main">
-          <strong>1 treino forte</strong>
-          <span>seguido por 3 treinos moderados</span>
-        </div>
-        <div class="principle-note">
-          A sequência pode ser distribuída conforme a rotina do atleta.
-        </div>
-      </div>
-
-      <div class="micro-sequence">
-        <div class="sequence-item strong">
-          <strong>FORTE</strong>
-          <span>Intervalado, Fartlek ou Limiar</span>
-        </div>
-        <div class="sequence-arrow">→</div>
-        <div class="sequence-item">
-          <strong>MODERADO</strong>
-          <span>Treino contínuo</span>
-        </div>
-        <div class="sequence-arrow">→</div>
-        <div class="sequence-item">
-          <strong>MODERADO</strong>
-          <span>Treino contínuo</span>
-        </div>
-        <div class="sequence-arrow">→</div>
-        <div class="sequence-item">
-          <strong>MODERADO</strong>
-          <span>Treino contínuo</span>
-        </div>
-      </div>
-    </section>
 
     <footer>
       UENF em Movimento • Versão Web em desenvolvimento
